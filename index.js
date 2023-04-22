@@ -1,105 +1,146 @@
-import { catsData } from '/data.js'
+import {menuArray, orderArray} from './data.js'
+const modalPayContainer = document.getElementById("modal-pay-container")
+const payForm = document.getElementById("pay-form")
 
-const emotionRadios = document.getElementById('emotion-radios')
-const getImageBtn = document.getElementById('get-image-btn')
-const gifsOnlyOption = document.getElementById('gifs-only-option')
-const memeModalInner = document.getElementById('meme-modal-inner')
-const memeModal = document.getElementById('meme-modal')
-const memeModalCloseBtn = document.getElementById('meme-modal-close-btn')
 
-emotionRadios.addEventListener('change', highlightCheckedOption)
+// 2. LISTEN FOR ANY CLICKS IN DOCUMENT AND TARGET THAT ELEMENT + CALL THE APPROPRIATE FUNCTION
+document.addEventListener("click", function(e){
 
-memeModalCloseBtn.addEventListener('click', closeModal)
+   if(e.target.dataset.addOrderBtn){
+     handleAddOrderBtn(e.target.dataset.addOrderBtn)
 
-getImageBtn.addEventListener('click', renderCat)
+   } else if(e.target.dataset.removeOrder){
+     removeOrderClick(e.target.dataset.removeOrder)
 
-function highlightCheckedOption(e){
-    const radios = document.getElementsByClassName('radio')
-    for (let radio of radios){
-        radio.classList.remove('highlight')
-    }
-    document.getElementById(e.target.id).parentElement.classList.add('highlight')
-}
+   } else if(e.target.id === 'close-modal-container'){
+      closeModalContainer()
 
-function closeModal(){
-    memeModal.style.display = 'none'
-}
+   } else if(e.target.id === 'complete-order-btn'){
+     completeOrderBtn()
+     
+   } else if(e.target.id ==='order-again-btn'){
+     closeModalContainer()
+     refreshOrderList()
+   }
+})
 
-function renderCat(){
-    const catObject = getSingleCatObject()
-    memeModalInner.innerHTML =  `
-        <img 
-        class="cat-img" 
-        src="./images/${catObject.image}"
-        alt="${catObject.alt}"
-        >
-        `
-    memeModal.style.display = 'flex'
-}
 
-function getSingleCatObject(){
-    const catsArray = getMatchingCatsArray()
+// 3. ADD ORDER AND RENDER IT
+
+// this function just modifies the orderArray by adding the menu item associated to the button, in the array
+function handleAddOrderBtn(itemId){
+    document.getElementById("order-inner").style.display = 'block'
+    const menuItemTargetObj = menuArray.filter(function(menuItem){
+        return itemId == menuItem.id
+    })[0]
+
+
+    orderArray.push(menuItemTargetObj)
     
-    if(catsArray.length === 1){
-        return catsArray[0]
-    }
-    else{
-        const randomNumber = Math.floor(Math.random() * catsArray.length)
-        return catsArray[randomNumber]
-    }
+
+    renderOrder()
 }
 
-function getMatchingCatsArray(){     
-    if(document.querySelector('input[type="radio"]:checked')){
-        const selectedEmotion = document.querySelector('input[type="radio"]:checked').value
-        const isGif = gifsOnlyOption.checked
-        
-        const matchingCatsArray = catsData.filter(function(cat){
-            
-            if(isGif){
-                return cat.emotionTags.includes(selectedEmotion) && cat.isGif
-            }
-            else{
-                return cat.emotionTags.includes(selectedEmotion)
-            }            
-        })
-        return matchingCatsArray 
-    }  
+// creates the html string using the name and the price from the objects (order) from the orderArray + render it
+
+function createOrder(){
+    let orderHtml='' 
+    orderArray.forEach(function(order){
+        orderHtml += `
+        <div class="order-detail">
+            <div class="order-detail-name">
+                <h3 class="order-name">${order.name}</h3>
+                <p class="remove-order" data-remove-order="${order.id}">✖</p>
+            </div>
+            <p class="order-quantity"></p>   
+            <h4 class="order-price">$${order.price}</h4>
+       </div>`
+
+    })
+    return orderHtml
 }
 
-function getEmotionsArray(cats){
-    const emotionsArray = []    
-    for (let cat of cats){
-        for (let emotion of cat.emotionTags){
-            if (!emotionsArray.includes(emotion)){
-                emotionsArray.push(emotion)
-            }
-        }
-    }
-    return emotionsArray
+// calculates and returns the total price of the orders
+function totalCalc(){
+    let total = 0
+    orderArray.forEach(function(order){
+        total += order.price
+    })
+    return total
 }
 
-function renderEmotionsRadios(cats){
-        
-    let radioItems = ``
-    const emotions = getEmotionsArray(cats)
-    for (let emotion of emotions){
-        radioItems += `
-        <div class="radio">
-            <label for="${emotion}">${emotion}</label>
-            <input
-            type="radio"
-            id="${emotion}"
-            value="${emotion}"
-            name="emotions"
-            >
-        </div>`
-    }
-    emotionRadios.innerHTML = radioItems
+function renderOrder(){
+    document.getElementById("order-display").innerHTML = createOrder()
+    document.getElementById("total-price").innerHTML = `$${totalCalc()}`
 }
 
-renderEmotionsRadios(catsData)
+//4. REMOVE THE ORDER FROM THE ORDER ARRAY
+function removeOrderClick(orderId){
+    const targetOrderObj = orderArray.filter(function(order){
+        return order.id == orderId
+    })[0]
+
+    let indexOfOrder = orderArray.indexOf(targetOrderObj)
+    orderArray.splice(indexOfOrder, 1)
+    renderOrder()
+}
+
+//5. CLICKING THE "COMPLETE ORDER BTN" WILL MAKE THE PAY-FORM TO APPEAR ON THE SCREEN ONLY IF THERE IS AT LEAST 1 ORDER
+function completeOrderBtn(){
+    if(orderArray.length){
+        modalPayContainer.style.display='block'
+    } else if(!orderArray.length) {
+        alert('Please, add an order first!')
+    } 
+
+}
+
+//6. LISTENS FOR A SUBMIT IN THE PAY-FORM AND RENDERS THE GREETIG MESSAGE
+payForm.addEventListener("submit", function(e){
+    e.preventDefault()
+    const formData = new FormData(payForm)
+    modalPayContainer.classList.add('green-background')
+    modalPayContainer.innerHTML = `
+    <p class="confirm-order">Thanks, ${formData.get('name')}! Your order is on its way!  (๑ᵔ⤙ᵔ๑)</p>
+    <button class="order-again-btn btn" id="order-again-btn">Order again</button> `
+})
+
+// 7.  CLICKING THE "CLOSE BTN" OR THE "ORDER AGAIN BTN" WILL CLOSE THE MODAL-PAY CONTAINER
+function closeModalContainer(){
+    modalPayContainer.style.display='none'
+}
+
+//8. BY CLICKING THE ORDER-AGAIN BTN WILL REFRESH THE ORDER LIST
+function refreshOrderList(){
+    window.location.reload();
+    
+}
 
 
+// 1. GET AND RENDER THE MENU ITMES FROM THE MENU ARRAY
+function getMenuHTML(){
+    let menuHtml = ''
+    menuArray.forEach(function(menuItem){
+        menuHtml += `
+        <div class='menu-item'>
+           <div class='menu-inner'>
+                <p class='menu-emoji'> ${menuItem.emoji}</p>
+                <div class='menu-detail'>
+                    <h3 class='menu-name'>${menuItem.name}</h3> 
+                    <p class='menu-ingredients'>${menuItem.ingredients}</p>               
+                    <h4 class='menu-price'>$${menuItem.price}</h4>  
+                </div>
+                <button class='add-order-btn' data-add-order-btn='${menuItem.id}'>+</button>    
+           </div>
+        </div>
+        `
+    })
 
+    return menuHtml
+}
 
+function renderMenu(){
+    document.getElementById('menu').innerHTML = getMenuHTML()
+}
+
+renderMenu()

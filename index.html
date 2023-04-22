@@ -1,38 +1,77 @@
+<!DOCTYPE html>
 <html>
+    <head>
+       <link rel="stylesheet" href="index.css">
+       <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200&display=swap" rel="stylesheet">
+       <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+       <title>Mobile ordering app</title>
+    </head>
+    
+    <body>
+        <header>
+            <h1>Helena's dessert</h1>
+            <p>The best sweets and cakes in town.</p>
+        </header>
+        
+        <main>
+            <div class="menu" id="menu">
+                <!-- Menu here!! -->
+            </div>
 
-<head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
-	<link rel="stylesheet" href="index.css">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;800&display=swap" rel="stylesheet">
-</head>
+            <div class="order" id="order">
+                <div class="order-inner" id="order-inner" >
+                    <h3 class="order-title">Your order:</h3>
+                    
+                    <div class="order-display" id="order-display">
+                        <!-- Order here -->
+                    </div>
+                
+                    <div class="total-order-price">
+                        <h3 class="total-title">Total price:</h3>
+                        <h4 class="total-price" id="total-price">$14</h4>
+                    </div>
+                    
 
-<body>
-	<header>
-		<div class="header-inner">
-			<img src="./images/pumpkin.png" class="pumpkin-img">
-			<div>
-				<h2>Pumpkin's Purrfect...</h2>
-				<h1>Meme Picker</h1>
-			</div>
-		</div>
-	</header>
-	<main>
-		<h3>Select Your Current Emotion</h3>
-		<div class="controls-container">
-			<div class="emotion-radios" id="emotion-radios"></div>
-			<div class="gifs-check">
-				<label for="gifs-only-option" class="gifs-check-label">Animated GIFs only</label>
-				<input type="checkbox" id="gifs-only-option">
-			</div>
-			<button class="get-image-btn" id="get-image-btn">Get Image</button>
-		</div>
-	</main>
-		<div class="meme-modal" id="meme-modal">
-			<button class="meme-modal-close-btn" id="meme-modal-close-btn">X</button>
-			<div id="meme-modal-inner"></div>
-		</div>
-	<script src="index.js" type="module"></script>
-</body>
+                    <button class="complete-order-btn btn" id="complete-order-btn">Complete order</button>
+                </div>    
+            </div>
+            
+        </main>
 
+        <div class="modal-pay-container" id="modal-pay-container">
+            <p class="pay-title">Enter card details</p>
+            <form class="pay-form" id="pay-form">
+               <input 
+               class="name input-item" 
+               type="text" 
+               placeholder="Enter your name" 
+               name="name" 
+               aria-label="Name" 
+               required>
+
+               <input 
+               class="card-number input-item" 
+               type="number" 
+               placeholder="Enter card number" 
+               name="card-number" 
+               aria-label="Card number" 
+               required>
+
+               <input 
+               class="cvv input-item" 
+               type="number" 
+               placeholder="Enter CVV"
+               name="cvv" 
+               aria-label="CVV" 
+               required>
+
+               <button class="pay-btn btn">Pay</button>
+            </form>
+            <button class="close-modal-container" id="close-modal-container">✖</button>
+        </div>
+            
+        <script src="index.js" type="module"></script>
+    </body>
 </html>
