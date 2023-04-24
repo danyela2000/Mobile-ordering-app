@@ -29,5 +29,3 @@ export const menuArray = [
     },
 
 ]
-
-export const orderArray = []

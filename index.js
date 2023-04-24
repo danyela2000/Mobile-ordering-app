@@ -1,6 +1,7 @@
-import {menuArray, orderArray} from './data.js'
+import {menuArray} from './data.js'
 const modalPayContainer = document.getElementById("modal-pay-container")
 const payForm = document.getElementById("pay-form")
+const orderArray = []
 
 
 // 2. LISTEN FOR ANY CLICKS IN DOCUMENT AND TARGET THAT ELEMENT + CALL THE APPROPRIATE FUNCTION
@@ -29,15 +30,14 @@ document.addEventListener("click", function(e){
 
 // this function just modifies the orderArray by adding the menu item associated to the button, in the array
 function handleAddOrderBtn(itemId){
+
     document.getElementById("order-inner").style.display = 'block'
     const menuItemTargetObj = menuArray.filter(function(menuItem){
         return itemId == menuItem.id
     })[0]
-
-
-    orderArray.push(menuItemTargetObj)
     
-
+    orderArray.push(menuItemTargetObj)
+       
     renderOrder()
 }
 
